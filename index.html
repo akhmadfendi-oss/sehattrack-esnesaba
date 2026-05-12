@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SehatTrack Esnesaba - 30 Hari Hidup Sehat</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>SehatTrack Esnesaba</h1>
+            <p class="subtitle">Program 30 Hari Hidup Sehat</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <div id="studentTab" class="tab active" onclick="switchView('student')">Siswa</div>
+            <div id="teacherTab" class="tab" onclick="switchView('teacher')">Guru</div>
+        </div>
+
+        <!-- Student Section -->
+        <section id="studentView" class="card">
+            <div id="userStats" class="stats-grid" style="display: none;">
+                <div class="stat-card">
+                    <span class="stat-label">Skor Saya</span>
+                    <span id="myScore" class="stat-value">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Badge</span>
+                    <div id="myBadges" class="badges-container" style="justify-content: center;">
+                        <!-- Badges will appear here -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="quoteBox" class="quote-card">
+                <p id="motivationQuote">"Kesehatan adalah kekayaan yang paling berharga."</p>
+            </div>
+
+            <form id="healthForm">
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="nama">Nama Lengkap</label>
+                        <input type="text" id="nama" placeholder="Masukkan nama..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kelas">Kelas</label>
+                        <select id="kelas" required>
+                            <option value="">Pilih Kelas</option>
+                            <option value="7A">7A</option>
+                            <option value="7B">7B</option>
+                            <option value="7C">7C</option>
+                            <option value="8A">8A</option>
+                            <option value="8B">8B</option>
+                            <option value="9A">9A</option>
+                            <option value="9B">9B</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Aktivitas Hari Ini</label>
+                    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label style="font-size: 0.8rem;">Sarapan?</label>
+                            <select id="sarapan">
+                                <option value="Ya">Ya</option>
+                                <option value="Tidak">Tidak</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem;">Air Putih (8 Gelas)?</label>
+                            <select id="airPutih">
+                                <option value="Ya">Ya</option>
+                                <option value="Tidak">Tidak</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem;">Olahraga?</label>
+                            <select id="olahraga">
+                                <option value="Ya">Ya</option>
+                                <option value="Tidak">Tidak</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem;">Tidur 8 Jam?</label>
+                            <select id="tidur">
+                                <option value="Ya">Ya</option>
+                                <option value="Tidak">Tidak</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="menuSarapan">Menu Sarapan (Jika Ya)</label>
+                    <input type="text" id="menuSarapan" placeholder="Misal: Nasi Goreng, Buah...">
+                </div>
+
+                <button type="submit" class="primary" id="submitBtn">
+                    <i data-lucide="send"></i>
+                    <span>Kirim Data</span>
+                    <div class="loader" id="btnLoader"></div>
+                </button>
+            </form>
+        </section>
+
+        <!-- Teacher Section -->
+        <section id="teacherView" class="card dashboard" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 style="font-size: 1.2rem;">Dashboard Guru</h2>
+                <button onclick="fetchTeacherData()" class="primary" style="width: auto; padding: 8px 16px; font-size: 0.9rem;">
+                    <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i>
+                    Refresh
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Total Respon</span>
+                    <span id="totalRespon" class="stat-value">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Siswa Aktif</span>
+                    <span id="totalSiswa" class="stat-value">0</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="searchStudent" placeholder="Cari nama siswa..." onkeyup="filterData()">
+            </div>
+
+            <div id="teacherTable" style="max-height: 400px; overflow-y: auto; border-radius: 12px;">
+                <!-- Data will be loaded here -->
+                <p style="text-align: center; color: var(--text-light);">Memuat data...</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
